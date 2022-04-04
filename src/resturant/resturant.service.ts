@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { SearchService } from 'src/search/search.service';
 import { CreateResturantDto } from './dto/create-resturant.dto';
 import { Resurant, ResurantDocument } from './schemas/resturant.schema';
 
@@ -8,6 +9,7 @@ import { Resurant, ResurantDocument } from './schemas/resturant.schema';
 export class ResturantService {
   constructor(
     @InjectModel(Resurant.name) private resurantModel: Model<ResurantDocument>,
+    private SearchService: SearchService,
   ) {}
 
   // Find all resturants
@@ -61,7 +63,18 @@ export class ResturantService {
   // Create a new resturant
   async create(resturant: CreateResturantDto): Promise<ResurantDocument> {
     let newResturant = await this.resurantModel.create(resturant);
+    await this.SearchService.indexResturant(newResturant);
     return newResturant;
+  }
+
+  // Search for resturants
+  async search(search: string): Promise<any> {
+    console.log({ search });
+
+    let restaurants = await this.SearchService.search(search);
+    console.log({ restaurants });
+
+    return restaurants;
   }
 
   // Delete a resturant

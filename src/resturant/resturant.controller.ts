@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -26,6 +27,23 @@ export class ResturantController {
       let resturant = await this.resturantServ.findAll();
       return res.status(HttpStatus.OK).json(resturant);
     } catch (error) {
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Internal Server Error' });
+    }
+  }
+
+  // search resturants
+  @Get('/search')
+  async search(@Res() res: Response, @Query('search') search: string) {
+    console.log({ search });
+
+    try {
+      let resturants = await this.resturantServ.search(search);
+      return res.status(HttpStatus.OK).json(resturants);
+    } catch (error) {
+      console.log({ error });
+
       return res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({ message: 'Internal Server Error' });
