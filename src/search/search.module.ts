@@ -12,7 +12,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         node: configService.get('ELASTIC_URI'),
         maxRetries: 10,
         requestTimeout: 60000,
-        
+        // auth: {
+        //   username: 'abdalah',
+        //   password: 'admin',
+        // },
+        // secure: false,
+        // tls: {
+        //   rejectUnauthorized: false,
+        // },
       }),
       inject: [ConfigService],
     }),
@@ -25,6 +32,6 @@ export class SearchModule implements OnModuleInit {
   constructor(private readonly searchService: SearchService) {}
 
   async onModuleInit() {
-    // await this.searchService.createIndex();
+    await this.searchService.createIndex();
   }
 }

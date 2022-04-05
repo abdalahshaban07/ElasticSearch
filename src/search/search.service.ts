@@ -10,12 +10,10 @@ export class SearchService {
   // create index
   async createIndex() {
     const index = process.env.ELASTIC_INDEX;
-    console.log({ index });
 
     const checkIndex = await this.elasticSearchService.indices.exists({
       index,
     });
-    console.log({ index, checkIndex });
 
     if (!checkIndex) {
       await this.elasticSearchService.indices.create({

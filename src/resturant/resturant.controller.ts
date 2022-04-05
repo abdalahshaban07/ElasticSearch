@@ -15,6 +15,7 @@ import mongoose from 'mongoose';
 import { CreateResturantDto } from './dto/create-resturant.dto';
 import { ResturantService } from './resturant.service';
 import { handleNotFound } from '../shared/handleNotFoundResturant';
+import { log } from 'console';
 
 @Controller('resturant')
 export class ResturantController {
@@ -22,8 +23,14 @@ export class ResturantController {
 
   // find all resturants
   @Get()
-  async getAll(@Res() res: Response) {
+  async getAll(@Res() res: Response, @Query('search') search: string) {
     try {
+      if (search) {
+        console.log({ search });
+
+        let resturants = await this.resturantServ.search(search);
+        return res.status(HttpStatus.OK).json(resturants);
+      }
       let resturant = await this.resturantServ.findAll();
       return res.status(HttpStatus.OK).json(resturant);
     } catch (error) {
@@ -34,21 +41,21 @@ export class ResturantController {
   }
 
   // search resturants
-  @Get('/search')
-  async search(@Res() res: Response, @Query('search') search: string) {
-    console.log({ search });
+  // @Get('/search')
+  // async search(@Res() res: Response, @Query('search') search: string) {
+  //   console.log({ search });
 
-    try {
-      let resturants = await this.resturantServ.search(search);
-      return res.status(HttpStatus.OK).json(resturants);
-    } catch (error) {
-      console.log({ error });
+  //   try {
+  //     let resturants = await this.resturantServ.search(search);
+  //     return res.status(HttpStatus.OK).json(resturants);
+  //   } catch (error) {
+  //     console.log({ error });
 
-      return res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: 'Internal Server Error' });
-    }
-  }
+  //     return res
+  //       .status(HttpStatus.INTERNAL_SERVER_ERROR)
+  //       .json({ message: 'Internal Server Error' });
+  //   }
+  // }
 
   //find By Id
   @Get('/:id')
